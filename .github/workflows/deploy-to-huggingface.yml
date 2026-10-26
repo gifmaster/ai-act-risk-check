@@ -15,8 +15,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt pytest huggingface_hub
@@ -27,18 +27,41 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           python - <<'EOF'
-          import os
+          import os, sys
           from huggingface_hub import HfApi
 
-          api = HfApi(token=os.environ["HF_TOKEN"])
+          def fail(msg):
+              # ::error:: shows up as a readable annotation on the run
+              print(f"::error title=Deploy failed::{msg}")
+              sys.exit(1)
+
+          token = os.environ.get("HF_TOKEN", "").strip()
+          if not token:
+              fail("HF_TOKEN secret is missing or empty. Add it under Settings > Secrets and variables > Actions.")
+
+          api = HfApi(token=token)
           space = os.environ["HF_SPACE"]
-          api.create_repo(space, repo_type="space", space_sdk="docker", exist_ok=True)
-          api.upload_folder(
-              folder_path=".",
-              repo_id=space,
-              repo_type="space",
-              ignore_patterns=[".git/*", ".github/*", "tests/*", "**/__pycache__/*"],
-              commit_message=f"Deploy {os.environ['GITHUB_SHA'][:7]} from GitHub",
-          )
+
+          try:
+              me = api.whoami()
+          except Exception as e:
+              fail(f"Hugging Face rejected the token ({type(e).__name__}). Check it was copied in full and is not expired.")
+          role = me.get("auth", {}).get("accessToken", {}).get("role", "unknown")
+          print(f"Token belongs to {me.get('name')} with role '{role}'")
+          if role == "read":
+              fail("HF_TOKEN is a read-only token. Create a new token with the 'Write' type.")
+
+          try:
+              api.create_repo(space, repo_type="space", space_sdk="docker", exist_ok=True)
+              api.upload_folder(
+                  folder_path=".",
+                  repo_id=space,
+                  repo_type="space",
+                  ignore_patterns=[".git/*", ".github/*", "tests/*", "**/__pycache__/*"],
+                  commit_message=f"Deploy {os.environ['GITHUB_SHA'][:7]} from GitHub",
+              )
+          except Exception as e:
+              fail(f"{type(e).__name__}: {str(e)[:500]}".replace("\n", " "))
+
           print(f"Deployed to https://huggingface.co/spaces/{space}")
           EOF
