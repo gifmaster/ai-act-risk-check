@@ -1,0 +1,217 @@
+# Acceptance test cases for the EU AI Act risk check.
+#
+# One source, two uses:
+#   - tests/test_acceptance.py runs every case automatically (pytest)
+#   - scripts/make_test_plan.py turns them into docs/TEST-PLAN.md for manual testing in the app
+#
+# Fields:
+#   tick                 question ids to tick (everything else stays unticked)
+#   role                 provider | deployer | both
+#   expect.tier          minimal | limited | high | prohibited | out_of_scope
+#   expect.cites         citations that must appear under "Why"
+#   expect.must_do       citations that must appear under "What you need to do"
+#   expect.must_not_do   citations that must NOT appear under "What you need to do"
+#   expect.applies_from  date shown next to the main reason (YYYY-MM-DD)
+
+cases:
+  # --- Minimal -----------------------------------------------------------------
+  - id: TC01
+    title: Spam filter
+    story: An email spam filter used internally by a company.
+    role: deployer
+    tick: []
+    expect:
+      tier: minimal
+      must_do: ["Art. 4 (as amended by Reg. (EU) 2026/1744)"]
+
+  - id: TC02
+    title: AI toy without third-party assessment
+    story: A toy with a small AI feature. Toy rules apply, but no notified body is involved.
+    role: provider
+    tick: [a1_product]
+    expect:
+      tier: minimal
+      must_not_do: ["Art. 9"]
+
+  # --- Transparency ------------------------------------------------------------
+  - id: TC03
+    title: Customer service chatbot
+    story: A company builds and launches a chatbot that answers customers in writing.
+    role: provider
+    tick: [t_interacts, t_generates]
+    expect:
+      tier: limited
+      cites: ["Art. 50(1)", "Art. 50(2)"]
+      must_do: ["Art. 50(1)", "Art. 50(2)"]
+
+  - id: TC04
+    title: Deepfake in a marketing video
+    story: A brand uses an AI-generated video of a realistic person in an ad.
+    role: deployer
+    tick: [t_deepfake]
+    expect:
+      tier: limited
+      cites: ["Art. 50(4)"]
+      must_do: ["Art. 50(4)"]
+
+  - id: TC05
+    title: AI-written public interest news
+    story: A local news site publishes AI-written articles on council decisions without an editor.
+    role: deployer
+    tick: [t_public_text]
+    expect:
+      tier: limited
+      must_do: ["Art. 50(4)"]
+
+  # --- High risk ---------------------------------------------------------------
+  - id: TC06
+    title: CV screening at a private company
+    story: HR uses a bought-in tool that ranks job applicants.
+    role: deployer
+    tick: [a3_employment]
+    expect:
+      tier: high
+      cites: ["Art. 6(2), Annex III point 4"]
+      applies_from: "2027-12-02"
+      must_do: ["Art. 26(2)", "Art. 26(6)", "Art. 26(7)", "Art. 86"]
+      must_not_do: ["Art. 27", "Art. 9"]
+
+  - id: TC07
+    title: Same CV tool, seen from the vendor
+    story: The software company that builds and sells the CV screening tool.
+    role: provider
+    tick: [a3_employment]
+    expect:
+      tier: high
+      must_do: ["Art. 9", "Art. 10", "Art. 14", "Art. 17", "Art. 49"]
+      must_not_do: ["Art. 26(1)"]
+
+  - id: TC08
+    title: Bank credit scoring
+    story: A bank scores consumers' creditworthiness before granting loans.
+    role: deployer
+    tick: [a3_credit, profiling]
+    expect:
+      tier: high
+      cites: ["Art. 6(2), Annex III point 5(b)"]
+      must_do: ["Art. 27"]
+
+  - id: TC09
+    title: Life insurance pricing
+    story: A pension and insurance company prices life insurance with an AI model.
+    role: deployer
+    tick: [a3_insurance]
+    expect:
+      tier: high
+      cites: ["Art. 6(2), Annex III point 5(c)"]
+      must_do: ["Art. 27"]
+
+  - id: TC10
+    title: Municipality benefits assessment
+    story: A municipality uses AI to assess eligibility for social benefits.
+    role: deployer
+    tick: [a3_public_benefits, ctx_public_service]
+    expect:
+      tier: high
+      cites: ["Art. 6(2), Annex III point 5(a)"]
+      must_do: ["Art. 27"]
+
+  - id: TC11
+    title: Exam proctoring
+    story: A university uses AI to flag cheating during online exams.
+    role: deployer
+    tick: [a3_education]
+    expect:
+      tier: high
+      cites: ["Art. 6(2), Annex III point 3"]
+
+  - id: TC12
+    title: AI in a medical device
+    story: Diagnostic software that is a medical device and needs a notified body.
+    role: provider
+    tick: [a1_product, a1_third_party]
+    expect:
+      tier: high
+      cites: ["Art. 6(1), Annex I"]
+      applies_from: "2028-08-02"
+
+  # --- The Art. 6(3) exception -------------------------------------------------
+  - id: TC13
+    title: HR document sorter
+    story: A tool that only sorts incoming HR documents into folders. No decisions about people.
+    role: provider
+    tick: [a3_employment, d_narrow_task]
+    expect:
+      tier: minimal
+      cites: ["Art. 6(3), Art. 6(4), Art. 49(2)"]
+      must_do: ["Art. 6(4)", "Art. 49(2)"]
+
+  - id: TC14
+    title: Preparatory HR tool that profiles people
+    story: A tool that prepares candidate summaries, but builds a profile of each person.
+    role: provider
+    tick: [a3_employment, d_preparatory, profiling]
+    expect:
+      tier: high
+      must_not_do: ["Art. 6(4)"]
+
+  # --- Prohibited --------------------------------------------------------------
+  - id: TC15
+    title: Emotion tracking of employees
+    story: A call centre uses AI to read agents' emotions from their voice.
+    role: deployer
+    tick: [p_emotion_work_education]
+    expect:
+      tier: prohibited
+      cites: ["Art. 5(1)(f)"]
+      must_do: ["Art. 5", "Art. 99(3)"]
+
+  - id: TC16
+    title: Social scoring hidden in a chatbot
+    story: A chatbot that also scores citizens on social behaviour.
+    role: both
+    tick: [p_social_scoring, t_interacts]
+    expect:
+      tier: prohibited
+      cites: ["Art. 5(1)(c)", "Art. 50(1)"]
+
+  - id: TC17
+    title: Nudify app
+    story: An app that creates explicit images of real people from normal photos.
+    role: provider
+    tick: [p_intimate_images, t_generates]
+    expect:
+      tier: prohibited
+      cites: ["Art. 5, as amended by Reg. (EU) 2026/1744"]
+      applies_from: "2026-12-02"
+
+  # --- Out of scope ------------------------------------------------------------
+  - id: TC18
+    title: Military targeting system
+    story: A defence system using facial recognition, used only for military purposes.
+    role: provider
+    tick: [scope_military, a3_biometrics]
+    expect:
+      tier: out_of_scope
+      cites: ["Art. 2(3)"]
+      must_not_do: ["Art. 4 (as amended by Reg. (EU) 2026/1744)"]
+
+  - id: TC19
+    title: Lab prototype
+    story: A research prototype that has not been launched or tested in real-world conditions.
+    role: provider
+    tick: [scope_premarket, a3_credit]
+    expect:
+      tier: out_of_scope
+      cites: ["Art. 2(8)"]
+
+  # --- General-purpose AI ------------------------------------------------------
+  - id: TC20
+    title: Company releasing its own foundation model
+    story: A startup trains and publishes its own general-purpose language model.
+    role: provider
+    tick: [ctx_gpai_provider]
+    expect:
+      tier: minimal
+      cites: ["Arts. 53 and 55"]
+      must_do: ["Art. 53(1)(c)", "Art. 53(1)(d)"]

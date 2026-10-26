@@ -96,7 +96,9 @@ pip install pytest
 pytest
 ```
 
-The suite covers the engine, rulebook validation, about 20 real-world scenarios, and a smoke test of the app itself.
+The suite covers the engine, rulebook validation, real-world scenarios, and a smoke test of the app itself.
+
+**Acceptance tests.** 20 cases (CV screening, credit scoring, a nudify app, a military system and more) live in [`tests/acceptance_cases.yaml`](tests/acceptance_cases.yaml). The same file runs automatically in CI and generates a [manual test plan](docs/TEST-PLAN.md) for clicking through the live app, so the human checks and the automated checks are always the same.
 
 ## Project structure
 
