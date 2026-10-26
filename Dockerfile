@@ -1,4 +1,4 @@
-# Used by Hugging Face Spaces (Docker SDK). Also works anywhere Docker runs.
+# Optional: run the app in Docker anywhere (docker build -t riskcheck . && docker run -p 8501:8501 riskcheck).
 FROM python:3.12-slim
 
 RUN useradd -m -u 1000 user

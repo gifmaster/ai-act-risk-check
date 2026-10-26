@@ -1,19 +1,7 @@
----
-title: EU AI Act Risk Check
-emoji: ⚖️
-colorFrom: green
-colorTo: gray
-sdk: docker
-app_port: 8501
-pinned: false
-license: mit
-short_description: Classify an AI system under the EU AI Act, with citations
----
-
 # EU AI Act Risk Check
 
 [![tests](https://github.com/gifmaster/ai-act-risk-check/actions/workflows/tests.yml/badge.svg)](https://github.com/gifmaster/ai-act-risk-check/actions/workflows/tests.yml)
-[![Open in Hugging Face](https://img.shields.io/badge/demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/sendosomething/ai-act-risk-check)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-act-risk-check.streamlit.app)
 
 **Find out where an AI system sits under the EU AI Act, and see exactly why.**
 
@@ -23,7 +11,7 @@ Up to date with the **Digital Omnibus on AI** (Regulation (EU) 2026/1744), inclu
 
 ![Screenshot: a CV screening tool classified as high risk](docs/screenshot.png)
 
-**[Try it live](https://huggingface.co/spaces/sendosomething/ai-act-risk-check)**
+**[Try it live](https://ai-act-risk-check.streamlit.app)**
 
 ---
 
