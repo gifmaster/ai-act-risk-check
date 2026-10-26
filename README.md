@@ -125,6 +125,8 @@ This is a **screening tool, not legal advice**. It simplifies some provisions (f
 ## About
 
 Built by **Alexander Senderovitz**, AI governance and digital transformation, Copenhagen.
-I help organisations put the EU AI Act into practice. [alexander@senderovitz.eu](mailto:alexander@senderovitz.eu)
+I help organisations put the EU AI Act into practice. [senderovitz.eu](https://senderovitz.eu) · [alexander@senderovitz.eu](mailto:alexander@senderovitz.eu)
+
+**Next step after classifying:** the [Practical AI Governance Framework](https://github.com/gifmaster/ai-governance-framework) covers the rest: policy, roles, the use case lifecycle and templates.
 
 Licensed under the MIT License.
