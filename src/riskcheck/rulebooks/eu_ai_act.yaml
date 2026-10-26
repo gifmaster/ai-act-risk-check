@@ -1,0 +1,560 @@
+# EU AI Act risk classification rulebook
+#
+# Regulation (EU) 2024/1689, as amended by the Digital Omnibus on AI,
+# Regulation (EU) 2026/1744 (in force 27 July 2026).
+#
+# How to read this file:
+#   questions  - yes/no questions shown to the user, grouped in sections
+#   facts      - named conditions, reused by several rules (referenced with $name)
+#   rules      - "when <condition> then <tier>", each with a citation and a reason
+#   always     - obligations that apply to every system in scope
+#
+# Conditions: a question id, a $fact, or {all: [...]}, {any: [...]}, {not: ...}
+#
+# This is a screening tool, not legal advice. Every rule cites its article so a
+# human can check it.
+
+id: eu-ai-act
+title: EU AI Act risk check
+version: "2026.10"
+last_reviewed: "2026-10-26"
+source: "Regulation (EU) 2024/1689 as amended by Regulation (EU) 2026/1744"
+default_tier: minimal
+
+roles:
+  provider: "Provider - you develop the AI system, or have it developed, and put it on the market under your name"
+  deployer: "Deployer - you use an AI system under your authority in a professional context"
+
+tiers:
+  # Ordered from least to most severe. The result is the most severe tier triggered.
+  - id: minimal
+    label: Minimal risk
+    summary: No specific AI Act requirements beyond AI literacy. Voluntary codes of conduct are encouraged.
+  - id: limited
+    label: Transparency obligations
+    summary: People must be told they are dealing with AI, or that content is AI-generated.
+  - id: high
+    label: High risk
+    summary: Strict requirements on risk management, data, documentation, human oversight and registration.
+  - id: prohibited
+    label: Prohibited
+    summary: This practice is banned in the EU. It must not be placed on the market, put into service or used.
+  - id: out_of_scope
+    label: Out of scope
+    summary: The AI Act does not apply to this use, based on your answers.
+
+sections:
+  - id: scope
+    title: "1. Scope"
+    intro: Some uses fall outside the AI Act entirely. Tick any that apply.
+  - id: prohibited
+    title: "2. Prohibited practices"
+    intro: Does the system do any of the following?
+  - id: annex_i
+    title: "3. Products and safety components"
+    intro: AI that is part of a regulated product.
+  - id: annex_iii
+    title: "4. High-risk use areas"
+    intro: Is the system used for any of these purposes?
+  - id: derogation
+    title: "5. Exceptions for high-risk use areas"
+    intro: Only relevant if you ticked something in section 4. Does the system only do one of these?
+  - id: transparency
+    title: "6. Transparency"
+    intro: Does the system interact with people or generate content?
+  - id: context
+    title: "7. Context"
+    intro: A few facts about you and the model.
+
+questions:
+  # --- Scope (Art. 2) ---------------------------------------------------------
+  - id: scope_military
+    section: scope
+    text: Used exclusively for military, defence or national security purposes
+    cite: Art. 2(3)
+  - id: scope_research
+    section: scope
+    text: Developed and used solely for scientific research and development
+    cite: Art. 2(6)
+  - id: scope_personal
+    section: scope
+    text: Used by a private person for purely personal, non-professional purposes
+    cite: Art. 2(10)
+  - id: scope_premarket
+    section: scope
+    text: Still in research, testing or development and not yet placed on the market or put into service
+    help: Testing in real-world conditions is not covered by this exclusion.
+    cite: Art. 2(8)
+
+  # --- Prohibited practices (Art. 5) ------------------------------------------
+  - id: p_manipulation
+    section: prohibited
+    text: Uses subliminal, manipulative or deceptive techniques that materially distort behaviour and are likely to cause significant harm
+    cite: Art. 5(1)(a)
+  - id: p_vulnerabilities
+    section: prohibited
+    text: Exploits vulnerabilities due to age, disability or a social or economic situation, in a way likely to cause significant harm
+    cite: Art. 5(1)(b)
+  - id: p_social_scoring
+    section: prohibited
+    text: Scores or classifies people based on social behaviour or personal traits, leading to unjustified or disproportionate detrimental treatment
+    cite: Art. 5(1)(c)
+  - id: p_crime_prediction
+    section: prohibited
+    text: Predicts the risk that a person will commit a crime, based solely on profiling or personality traits
+    cite: Art. 5(1)(d)
+  - id: p_face_scraping
+    section: prohibited
+    text: Builds or expands facial recognition databases by untargeted scraping of images from the internet or CCTV
+    cite: Art. 5(1)(e)
+  - id: p_emotion_work_education
+    section: prohibited
+    text: Infers emotions of people in the workplace or in education (not for medical or safety reasons)
+    cite: Art. 5(1)(f)
+  - id: p_biometric_sensitive
+    section: prohibited
+    text: Uses biometric data to infer race, political opinions, trade union membership, religious or philosophical beliefs, sex life or sexual orientation
+    cite: Art. 5(1)(g)
+  - id: p_realtime_rbi
+    section: prohibited
+    text: Real-time remote biometric identification in publicly accessible spaces for law enforcement
+    help: Narrow, pre-authorised exceptions exist (e.g. searching for victims of specific crimes). Treat as prohibited unless you have legal confirmation.
+    cite: Art. 5(1)(h)
+  - id: p_intimate_images
+    section: prohibited
+    text: Creates or manipulates realistic intimate or sexually explicit images of an identifiable person without their consent
+    cite: Art. 5 (added by Reg. 2026/1744)
+  - id: p_csam
+    section: prohibited
+    text: Generates or manipulates child sexual abuse material
+    cite: Art. 5 (added by Reg. 2026/1744)
+
+  # --- Annex I products (Art. 6(1)) -------------------------------------------
+  - id: a1_product
+    section: annex_i
+    text: The AI is itself a product, or a safety component of a product, covered by EU product legislation in Annex I
+    help: "Examples: medical devices, in vitro diagnostics, toys, lifts, radio equipment, vehicles. Machinery was moved to Annex I Section B by the 2026 amendment."
+    cite: Art. 6(1)(a), Annex I
+  - id: a1_third_party
+    section: annex_i
+    text: That product must undergo a third-party conformity assessment
+    cite: Art. 6(1)(b)
+
+  # --- Annex III use areas (Art. 6(2)) ----------------------------------------
+  - id: a3_biometrics
+    section: annex_iii
+    text: "Biometrics: remote biometric identification, biometric categorisation by sensitive traits, or emotion recognition"
+    help: Simple biometric verification (confirming someone is who they claim to be) is not covered.
+    cite: Annex III, point 1
+  - id: a3_critical_infrastructure
+    section: annex_iii
+    text: "Critical infrastructure: safety component in digital infrastructure, road traffic, or supply of water, gas, heating or electricity"
+    cite: Annex III, point 2
+  - id: a3_education
+    section: annex_iii
+    text: "Education: admission, grading or evaluating learning outcomes, assessing education level, or monitoring cheating in tests"
+    cite: Annex III, point 3
+  - id: a3_employment
+    section: annex_iii
+    text: "Employment: recruiting, screening or evaluating candidates, or decisions on promotion, termination, task allocation or performance"
+    cite: Annex III, point 4
+  - id: a3_public_benefits
+    section: annex_iii
+    text: "Public services: a public authority evaluating eligibility for public assistance benefits and services, including healthcare"
+    cite: Annex III, point 5(a)
+  - id: a3_credit
+    section: annex_iii
+    text: "Credit: evaluating creditworthiness or setting credit scores of people (fraud detection excluded)"
+    cite: Annex III, point 5(b)
+  - id: a3_insurance
+    section: annex_iii
+    text: "Insurance: risk assessment and pricing for people in life and health insurance"
+    cite: Annex III, point 5(c)
+  - id: a3_emergency
+    section: annex_iii
+    text: "Emergencies: classifying emergency calls, dispatching emergency services, or patient triage"
+    cite: Annex III, point 5(d)
+  - id: a3_law_enforcement
+    section: annex_iii
+    text: "Law enforcement: e.g. assessing risk of victimisation, evaluating evidence, profiling in investigations"
+    cite: Annex III, point 6
+  - id: a3_migration
+    section: annex_iii
+    text: "Migration, asylum and border control: e.g. assessing risks or examining applications"
+    cite: Annex III, point 7
+  - id: a3_justice
+    section: annex_iii
+    text: "Justice: helping a judicial authority or dispute resolution body research and interpret facts and law"
+    cite: Annex III, point 8(a)
+  - id: a3_elections
+    section: annex_iii
+    text: "Democratic processes: influencing the outcome of an election or referendum, or people's voting behaviour"
+    help: Tools that only organise or optimise campaigns logistically are not covered.
+    cite: Annex III, point 8(b)
+
+  # --- Art. 6(3) derogation ---------------------------------------------------
+  - id: d_narrow_task
+    section: derogation
+    text: It only performs a narrow procedural task (e.g. sorting documents into categories)
+    cite: Art. 6(3)(a)
+  - id: d_improves_human
+    section: derogation
+    text: It only improves the result of an activity a human has already completed
+    cite: Art. 6(3)(b)
+  - id: d_detects_patterns
+    section: derogation
+    text: It only detects patterns or deviations in past decisions, without replacing or influencing human assessment without proper review
+    cite: Art. 6(3)(c)
+  - id: d_preparatory
+    section: derogation
+    text: It only performs a preparatory task for an assessment made by a human
+    cite: Art. 6(3)(d)
+  - id: profiling
+    section: derogation
+    text: The system profiles natural persons (automated evaluation of personal aspects such as performance, reliability, behaviour)
+    help: If yes, the exceptions above do not apply. Profiling in a high-risk area is always high risk.
+    cite: Art. 6(3), last subparagraph
+
+  # --- Transparency (Art. 50) -------------------------------------------------
+  - id: t_interacts
+    section: transparency
+    text: Interacts directly with people (e.g. chatbot, voice assistant)
+    cite: Art. 50(1)
+  - id: t_generates
+    section: transparency
+    text: Generates synthetic audio, images, video or text
+    cite: Art. 50(2)
+  - id: t_emotion_biometric
+    section: transparency
+    text: Uses emotion recognition or biometric categorisation on people
+    cite: Art. 50(3)
+  - id: t_deepfake
+    section: transparency
+    text: Generates or manipulates images, audio or video that could pass as real (deepfakes)
+    cite: Art. 50(4)
+  - id: t_public_text
+    section: transparency
+    text: Publishes AI-generated text to inform the public on matters of public interest, without human editorial review
+    cite: Art. 50(4)
+
+  # --- Context ----------------------------------------------------------------
+  - id: ctx_public_service
+    section: context
+    text: You are a public body, or a private organisation providing public services
+    cite: Art. 27(1)
+  - id: ctx_gpai_provider
+    section: context
+    text: You develop and release a general-purpose AI model yourself (not just use one through an API)
+    cite: Art. 3(63), Art. 53
+
+facts:
+  annex_iii:
+    any: [a3_biometrics, a3_critical_infrastructure, a3_education, a3_employment,
+          a3_public_benefits, a3_credit, a3_insurance, a3_emergency,
+          a3_law_enforcement, a3_migration, a3_justice, a3_elections]
+  derogation:
+    any: [d_narrow_task, d_improves_human, d_detects_patterns, d_preparatory]
+  # An Annex III system stays high-risk unless an exception applies, and never escapes if it profiles people.
+  no_exception:
+    any: [{not: $derogation}, profiling]
+  annex_iii_high:
+    all: [$annex_iii, $no_exception]
+  annex_i_high:
+    all: [a1_product, a1_third_party]
+  high_risk:
+    any: [$annex_iii_high, $annex_i_high]
+
+rules:
+  # --- Out of scope: checked first, stop evaluation ---------------------------
+  - id: scope.military
+    when: scope_military
+    tier: out_of_scope
+    stop: true
+    cite: Art. 2(3)
+    reason: AI used exclusively for military, defence or national security is excluded from the AI Act.
+  - id: scope.research
+    when: scope_research
+    tier: out_of_scope
+    stop: true
+    cite: Art. 2(6)
+    reason: AI developed and used solely for scientific research and development is excluded.
+  - id: scope.personal
+    when: scope_personal
+    tier: out_of_scope
+    stop: true
+    cite: Art. 2(10)
+    reason: Deployer obligations do not apply to private persons using AI for purely personal, non-professional purposes.
+  - id: scope.premarket
+    when: scope_premarket
+    tier: out_of_scope
+    stop: true
+    cite: Art. 2(8)
+    reason: Research, testing and development before the system is placed on the market or put into service is excluded. The Act applies once you launch or test in real-world conditions.
+
+  # --- Prohibited -------------------------------------------------------------
+  - id: prohibited.manipulation
+    when: p_manipulation
+    tier: prohibited
+    cite: Art. 5(1)(a)
+    applies_from: "2025-02-02"
+    reason: Manipulative or deceptive techniques that distort behaviour and risk significant harm are banned.
+  - id: prohibited.vulnerabilities
+    when: p_vulnerabilities
+    tier: prohibited
+    cite: Art. 5(1)(b)
+    applies_from: "2025-02-02"
+    reason: Exploiting vulnerabilities linked to age, disability or social or economic situation is banned.
+  - id: prohibited.social_scoring
+    when: p_social_scoring
+    tier: prohibited
+    cite: Art. 5(1)(c)
+    applies_from: "2025-02-02"
+    reason: Social scoring that leads to unjustified or disproportionate detrimental treatment is banned.
+  - id: prohibited.crime_prediction
+    when: p_crime_prediction
+    tier: prohibited
+    cite: Art. 5(1)(d)
+    applies_from: "2025-02-02"
+    reason: Predicting criminal behaviour based solely on profiling or personality traits is banned.
+  - id: prohibited.face_scraping
+    when: p_face_scraping
+    tier: prohibited
+    cite: Art. 5(1)(e)
+    applies_from: "2025-02-02"
+    reason: Untargeted scraping of facial images to build recognition databases is banned.
+  - id: prohibited.emotion
+    when: p_emotion_work_education
+    tier: prohibited
+    cite: Art. 5(1)(f)
+    applies_from: "2025-02-02"
+    reason: Emotion recognition in the workplace and in education is banned, except for medical or safety reasons.
+  - id: prohibited.biometric_sensitive
+    when: p_biometric_sensitive
+    tier: prohibited
+    cite: Art. 5(1)(g)
+    applies_from: "2025-02-02"
+    reason: Biometric categorisation to infer sensitive characteristics is banned.
+  - id: prohibited.realtime_rbi
+    when: p_realtime_rbi
+    tier: prohibited
+    cite: Art. 5(1)(h)
+    applies_from: "2025-02-02"
+    reason: Real-time remote biometric identification in public spaces for law enforcement is banned, apart from narrow, authorised exceptions.
+  - id: prohibited.intimate_images
+    when: p_intimate_images
+    tier: prohibited
+    cite: Art. 5, as amended by Reg. (EU) 2026/1744
+    applies_from: "2026-12-02"
+    reason: AI that creates non-consensual intimate or sexually explicit images of identifiable people is banned.
+  - id: prohibited.csam
+    when: p_csam
+    tier: prohibited
+    cite: Art. 5, as amended by Reg. (EU) 2026/1744
+    applies_from: "2026-12-02"
+    reason: AI that generates child sexual abuse material is banned.
+  - id: prohibited.obligations
+    when: {any: [p_manipulation, p_vulnerabilities, p_social_scoring, p_crime_prediction,
+                 p_face_scraping, p_emotion_work_education, p_biometric_sensitive,
+                 p_realtime_rbi, p_intimate_images, p_csam]}
+    tier: prohibited
+    hidden: true
+    obligations:
+      - who: all
+        text: Do not place on the market, put into service or use this system for the prohibited purpose. Stop or redesign it.
+        cite: Art. 5
+      - who: all
+        text: Fines for prohibited practices go up to EUR 35 million or 7% of worldwide annual turnover, whichever is higher.
+        cite: Art. 99(3)
+
+  # --- High risk: Annex I -----------------------------------------------------
+  - id: high.annex_i
+    when: $annex_i_high
+    tier: high
+    cite: Art. 6(1), Annex I
+    applies_from: "2028-08-02"
+    reason: The AI is a product or safety component under EU product legislation that requires third-party conformity assessment.
+
+  # --- High risk: Annex III, one rule per area for a precise citation ---------
+  - id: high.biometrics
+    when: {all: [a3_biometrics, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 1
+    applies_from: "2027-12-02"
+    reason: Biometric identification, categorisation and emotion recognition are high-risk use areas.
+  - id: high.critical_infrastructure
+    when: {all: [a3_critical_infrastructure, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 2
+    applies_from: "2027-12-02"
+    reason: Safety components in critical infrastructure are high risk.
+  - id: high.education
+    when: {all: [a3_education, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 3
+    applies_from: "2027-12-02"
+    reason: AI deciding access to education or evaluating learners is high risk.
+  - id: high.employment
+    when: {all: [a3_employment, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 4
+    applies_from: "2027-12-02"
+    reason: AI used in recruitment or decisions about workers is high risk.
+  - id: high.public_benefits
+    when: {all: [a3_public_benefits, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 5(a)
+    applies_from: "2027-12-02"
+    reason: AI deciding eligibility for public benefits and services is high risk.
+  - id: high.credit
+    when: {all: [a3_credit, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 5(b)
+    applies_from: "2027-12-02"
+    reason: Credit scoring and creditworthiness assessment of people is high risk.
+  - id: high.insurance
+    when: {all: [a3_insurance, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 5(c)
+    applies_from: "2027-12-02"
+    reason: Risk assessment and pricing in life and health insurance is high risk.
+  - id: high.emergency
+    when: {all: [a3_emergency, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 5(d)
+    applies_from: "2027-12-02"
+    reason: Emergency call handling, dispatch and triage is high risk.
+  - id: high.law_enforcement
+    when: {all: [a3_law_enforcement, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 6
+    applies_from: "2027-12-02"
+    reason: Listed law enforcement uses are high risk.
+  - id: high.migration
+    when: {all: [a3_migration, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 7
+    applies_from: "2027-12-02"
+    reason: Listed migration, asylum and border control uses are high risk.
+  - id: high.justice
+    when: {all: [a3_justice, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 8(a)
+    applies_from: "2027-12-02"
+    reason: AI assisting courts or dispute resolution in interpreting facts and law is high risk.
+  - id: high.elections
+    when: {all: [a3_elections, $no_exception]}
+    tier: high
+    cite: Art. 6(2), Annex III point 8(b)
+    applies_from: "2027-12-02"
+    reason: AI intended to influence elections or voting behaviour is high risk.
+
+  # --- Annex III exception applied --------------------------------------------
+  - id: high.exception_applied
+    when: {all: [$annex_iii, $derogation, {not: profiling}]}
+    tier: null
+    cite: Art. 6(3), Art. 6(4), Art. 49(2)
+    applies_from: "2027-12-02"
+    reason: The system is in a high-risk area but performs only a limited task, so it is not treated as high risk. You must be able to prove it.
+    obligations:
+      - who: provider
+        text: Document your assessment that the system is not high risk before placing it on the market, and share it with authorities on request.
+        cite: Art. 6(4)
+      - who: provider
+        text: Register the system in the EU database even though you assessed it as not high risk.
+        cite: Art. 49(2)
+
+  # --- High-risk obligations (shared, not listed as a separate reason) --------
+  - id: high.obligations
+    when: $high_risk
+    tier: high
+    hidden: true
+    obligations:
+      - {who: provider, text: Set up and maintain a risk management system across the lifecycle., cite: Art. 9}
+      - {who: provider, text: "Use training, validation and test data that is relevant, representative and checked for bias.", cite: Art. 10}
+      - {who: provider, text: Write technical documentation before placing the system on the market., cite: "Art. 11, Annex IV"}
+      - {who: provider, text: Make the system log events automatically., cite: Art. 12}
+      - {who: provider, text: Give deployers clear instructions for use., cite: Art. 13}
+      - {who: provider, text: Design the system so humans can oversee it effectively., cite: Art. 14}
+      - {who: provider, text: "Ensure appropriate accuracy, robustness and cybersecurity.", cite: Art. 15}
+      - {who: provider, text: Run a quality management system., cite: Art. 17}
+      - {who: provider, text: "Complete the conformity assessment, sign the EU declaration of conformity and affix the CE marking.", cite: "Arts. 43, 47, 48"}
+      - {who: provider, text: Register the system in the EU database., cite: Art. 49}
+      - {who: provider, text: Monitor the system after launch and report serious incidents., cite: "Arts. 72, 73"}
+      - {who: deployer, text: Use the system according to the provider's instructions., cite: Art. 26(1)}
+      - {who: deployer, text: "Assign human oversight to people with the competence, training and authority to do it.", cite: Art. 26(2)}
+      - {who: deployer, text: Make sure input data you control is relevant and representative., cite: Art. 26(4)}
+      - {who: deployer, text: Monitor operation and inform the provider and authorities if you see a risk or serious incident., cite: Art. 26(5)}
+      - {who: deployer, text: Keep automatically generated logs for at least six months., cite: Art. 26(6)}
+      - {who: deployer, text: Inform workers and their representatives before using the system at the workplace., cite: Art. 26(7)}
+      - {who: deployer, text: Tell people when a high-risk system is used to make or support decisions about them., cite: Art. 26(11)}
+      - {who: deployer, text: Be ready to explain individual decisions to affected people on request., cite: Art. 86}
+
+  - id: high.fria
+    when: {all: [$annex_iii_high, {any: [ctx_public_service, a3_credit, a3_insurance]}]}
+    tier: high
+    hidden: true
+    obligations:
+      - who: deployer
+        text: Carry out a fundamental rights impact assessment before first use (not required for systems used only for critical infrastructure).
+        cite: Art. 27
+
+  # --- Transparency (Art. 50) -------------------------------------------------
+  - id: transparency.interaction
+    when: t_interacts
+    tier: limited
+    cite: Art. 50(1)
+    applies_from: "2026-08-02"
+    reason: People must know they are interacting with an AI system unless it is obvious.
+    obligations:
+      - {who: provider, text: Design the system so people are informed they are interacting with AI., cite: Art. 50(1)}
+  - id: transparency.generated
+    when: t_generates
+    tier: limited
+    cite: Art. 50(2)
+    applies_from: "2026-08-02"
+    reason: AI-generated content must be marked as such in a machine-readable way.
+    note: Systems already on the market before 2 August 2026 have until 2 December 2026.
+    obligations:
+      - {who: provider, text: "Mark synthetic audio, image, video and text outputs in a machine-readable format so they are detectable as AI-generated.", cite: Art. 50(2)}
+  - id: transparency.emotion_biometric
+    when: t_emotion_biometric
+    tier: limited
+    cite: Art. 50(3)
+    applies_from: "2026-08-02"
+    reason: People exposed to emotion recognition or biometric categorisation must be informed.
+    obligations:
+      - {who: deployer, text: Inform the people exposed to the system that it is operating., cite: Art. 50(3)}
+  - id: transparency.deepfake
+    when: t_deepfake
+    tier: limited
+    cite: Art. 50(4)
+    applies_from: "2026-08-02"
+    reason: Deepfakes must be disclosed as artificially generated or manipulated.
+    obligations:
+      - {who: deployer, text: "Disclose that the content is artificially generated or manipulated (lighter rules for clearly artistic, satirical or fictional work).", cite: Art. 50(4)}
+  - id: transparency.public_text
+    when: t_public_text
+    tier: limited
+    cite: Art. 50(4)
+    applies_from: "2026-08-02"
+    reason: AI-generated text informing the public on matters of public interest must be disclosed, unless a human has reviewed it and holds editorial responsibility.
+    obligations:
+      - {who: deployer, text: "Disclose that the text is AI-generated, or put it through human review with editorial responsibility.", cite: Art. 50(4)}
+
+  # --- General-purpose AI models ----------------------------------------------
+  - id: gpai.provider
+    when: ctx_gpai_provider
+    tier: null
+    cite: Arts. 53 and 55
+    applies_from: "2025-08-02"
+    reason: Providers of general-purpose AI models have their own obligations, separate from the risk tiers above.
+    obligations:
+      - {who: provider, text: "Keep technical documentation of the model and share information with downstream providers.", cite: Art. 53(1)(a)-(b)}
+      - {who: provider, text: Put in place a policy to comply with EU copyright law., cite: Art. 53(1)(c)}
+      - {who: provider, text: Publish a summary of the content used for training., cite: Art. 53(1)(d)}
+      - {who: provider, text: "If the model has systemic risk: evaluate it, mitigate risks, report serious incidents and ensure cybersecurity.", cite: Art. 55}
+
+always:
+  - who: all
+    text: "Take measures to support AI literacy among staff and others who operate or use AI on your behalf, suited to their knowledge and the context of use."
+    cite: Art. 4 (as amended by Reg. (EU) 2026/1744)
