@@ -13,6 +13,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from riskcheck import Rulebook, evaluate, to_markdown  # noqa: E402
+from riskcheck.pdf import markdown_to_pdf  # noqa: E402
 from riskcheck.report import ROLE_LABELS, WHO_LABELS  # noqa: E402
 
 # Change this to your own repository once it is on GitHub.
@@ -112,10 +113,21 @@ with right:
     for ob in result.obligations:
         st.markdown(f"- **{WHO_LABELS[ob.who]}:** {ob.text} `{ob.cite}`")
 
+    report = to_markdown(result, rb, system_name)
+    stem = f"ai-act-check-{(system_name or 'system').lower().replace(' ', '-')}"
+    st.download_button(
+        "Download report (PDF)",
+        data=markdown_to_pdf(report, "EU AI Act Risk Check"),
+        file_name=f"{stem}.pdf",
+        mime="application/pdf",
+        type="primary",
+        width="stretch",
+    )
     st.download_button(
         "Download report (Markdown)",
-        data=to_markdown(result, rb, system_name),
-        file_name=f"ai-act-check-{(system_name or 'system').lower().replace(' ', '-')}.md",
+        data=report,
+        file_name=f"{stem}.md",
         mime="text/markdown",
         width="stretch",
+        help="Editable text. The AI Use Case Register can import this file.",
     )
