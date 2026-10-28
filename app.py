@@ -101,7 +101,10 @@ with right:
     getattr(st, kind)(f"### {icon} {result.tier.label}\n{result.tier.summary}")
 
     for w in result.warnings:
-        st.warning(f"**Check your scope answer** `{w.cite}`  \n{w.text}")
+        if w.kind == "note":
+            st.info(f"**Note for systems that act on their own** `{w.cite}`  \n{w.text}")
+        else:
+            st.warning(f"**Check your scope answer** `{w.cite}`  \n{w.text}")
     if result.role_shifted:
         st.warning(
             "**Your role changes.** Your answers make you the provider of this system "

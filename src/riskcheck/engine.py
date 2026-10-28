@@ -90,6 +90,8 @@ class Warning:
     when: Any
     text: str
     cite: str = ""
+    kind: str = "check"  # "check" asks the user to re-check an answer, "note" adds a pointer
+    tiers: tuple[str, ...] = ()  # only for these result tiers; empty means any tier
 
 
 @dataclass
@@ -140,7 +142,7 @@ class Rulebook:
             }
             self.facts: dict[str, Any] = dict(data.get("facts", {}))
             self.rules: list[Rule] = [_parse_rule(r) for r in data["rules"]]
-            self.warnings: list[Warning] = [Warning(**w) for w in data.get("warnings", [])]
+            self.warnings: list[Warning] = [Warning(**{**w, "tiers": tuple(w.get("tiers", ()))}) for w in data.get("warnings", [])]
             self.always: tuple[Obligation, ...] = tuple(
                 Obligation(**o) for o in data.get("always", [])
             )
@@ -177,6 +179,11 @@ class Rulebook:
             if not w.text:
                 raise RulebookError(f"Warning '{w.id}' needs text")
             self._check_refs(w.when, f"warning '{w.id}'")
+            if w.kind not in ("check", "note"):
+                raise RulebookError(f"Warning '{w.id}' has unknown kind '{w.kind}'")
+            for t in w.tiers:
+                if t not in self.tiers:
+                    raise RulebookError(f"Warning '{w.id}' names unknown tier '{t}'")
 
         seen: set[str] = set()
         for rule in self.rules:
@@ -320,6 +327,6 @@ def evaluate(rulebook: Rulebook, answers: Mapping[str, bool], role: str = "both"
         matched=matched,
         obligations=obligations,
         answers={k: v for k, v in clean.items() if v},
-        warnings=[w for w in rulebook.warnings if check(w.when)],
+        warnings=[w for w in rulebook.warnings if check(w.when) and (not w.tiers or tier_id in w.tiers)],
         effective_role=effective,
     )
