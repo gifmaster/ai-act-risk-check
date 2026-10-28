@@ -51,7 +51,7 @@ That means:
 | General-purpose AI model providers | Arts. 53, 55 |
 | AI literacy | Art. 4 |
 
-Results can be downloaded as a Markdown report with a checklist, ready to drop into an AI register or a ticket.
+Results can be downloaded as a PDF report to share, or as a Markdown report with a checklist, ready to drop into an AI register or a ticket. The [AI Use Case Register](https://github.com/gifmaster/ai-use-case-register) imports the Markdown report.
 
 ## How it works
 
@@ -62,7 +62,7 @@ flowchart LR
     E --> T[Risk tier]
     E --> W[Why: rule + article]
     E --> O[Obligations by role]
-    T & W & O --> M[Markdown report]
+    T & W & O --> M[PDF and Markdown report]
 ```
 
 The engine (`src/riskcheck/engine.py`) knows nothing about the AI Act. It reads a rulebook, checks it for mistakes (unknown questions, missing citations, duplicate rules), and evaluates it. **Swap the rulebook and the same engine screens a different regulation.** A DORA rulebook is next.
@@ -106,6 +106,7 @@ The suite covers the engine, rulebook validation, real-world scenarios, and a sm
 app.py                              Streamlit interface
 src/riskcheck/engine.py             Generic rules engine + validation
 src/riskcheck/report.py             Markdown report
+src/riskcheck/pdf.py                PDF version of the report
 src/riskcheck/rulebooks/eu_ai_act.yaml   The EU AI Act, as rules
 tests/                              Engine, scenario and app tests
 docs/METHOD.md                      How the rules were built and their limits
