@@ -48,7 +48,7 @@ rb = load_rulebook()
 
 # --- Header ------------------------------------------------------------------
 st.title("EU AI Act risk check")
-st.caption("Built by [Alexander Senderovitz](https://senderovitz.eu)")
+st.caption(f"Built by [Alexander Senderovitz](https://senderovitz.eu) · Rules last reviewed {rb.last_reviewed}")
 st.caption(
     f"Rulebook v{rb.version}, reviewed {rb.last_reviewed}. {rb.source}. "
     "Every result shows the rule and article behind it."
@@ -139,7 +139,7 @@ with right:
     stem = f"ai-act-check-{(system_name or 'system').lower().replace(' ', '-')}"
     st.download_button(
         "Download report (PDF)",
-        data=markdown_to_pdf(report, "EU AI Act Risk Check"),
+        data=markdown_to_pdf(report, "EU AI Act Risk Check", reviewed=rb.last_reviewed),
         file_name=f"{stem}.pdf",
         mime="application/pdf",
         type="primary",
