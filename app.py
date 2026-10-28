@@ -48,6 +48,7 @@ rb = load_rulebook()
 
 # --- Header ------------------------------------------------------------------
 st.title("EU AI Act risk check")
+st.caption("Built by [Alexander Senderovitz](https://senderovitz.eu)")
 st.caption(
     f"Rulebook v{rb.version}, reviewed {rb.last_reviewed}. {rb.source}. "
     "Every result shows the rule and article behind it."
