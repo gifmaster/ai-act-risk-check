@@ -36,6 +36,7 @@ class Tier:
     label: str
     summary: str
     rank: int
+    exclusive: bool = False  # if True, only this tier's own obligations are shown
 
 
 @dataclass(frozen=True)
@@ -77,7 +78,18 @@ class Rule:
     applies_from: date | None = None
     stop: bool = False
     hidden: bool = False
+    makes_provider: bool = False  # a deployer who matches this rule takes on provider duties
     obligations: tuple[Obligation, ...] = ()
+
+
+@dataclass(frozen=True)
+class Warning:
+    """A caution shown next to the result when a condition holds. It never changes the tier."""
+
+    id: str
+    when: Any
+    text: str
+    cite: str = ""
 
 
 @dataclass
@@ -89,6 +101,13 @@ class Result:
     matched: list[Rule]
     obligations: list[Obligation]
     answers: dict[str, bool] = field(default_factory=dict)
+    warnings: list[Warning] = field(default_factory=list)
+    effective_role: str = ""
+
+    @property
+    def role_shifted(self) -> bool:
+        """True when the answers move a deployer into the provider role (Art. 25)."""
+        return bool(self.effective_role) and self.effective_role != self.role
 
     @property
     def reasons(self) -> list[Rule]:
@@ -111,7 +130,7 @@ class Rulebook:
             self.source: str = data.get("source", "")
             self.roles: dict[str, str] = dict(data.get("roles", {}))
             self.tiers: dict[str, Tier] = {
-                t["id"]: Tier(t["id"], t["label"], t["summary"], rank)
+                t["id"]: Tier(t["id"], t["label"], t["summary"], rank, bool(t.get("exclusive", False)))
                 for rank, t in enumerate(data["tiers"])
             }
             self.default_tier: str = data["default_tier"]
@@ -121,6 +140,7 @@ class Rulebook:
             }
             self.facts: dict[str, Any] = dict(data.get("facts", {}))
             self.rules: list[Rule] = [_parse_rule(r) for r in data["rules"]]
+            self.warnings: list[Warning] = [Warning(**w) for w in data.get("warnings", [])]
             self.always: tuple[Obligation, ...] = tuple(
                 Obligation(**o) for o in data.get("always", [])
             )
@@ -152,6 +172,11 @@ class Rulebook:
 
         for name, cond in self.facts.items():
             self._check_refs(cond, f"fact '{name}'")
+
+        for w in self.warnings:
+            if not w.text:
+                raise RulebookError(f"Warning '{w.id}' needs text")
+            self._check_refs(w.when, f"warning '{w.id}'")
 
         seen: set[str] = set()
         for rule in self.rules:
@@ -197,6 +222,7 @@ def _parse_rule(raw: Mapping[str, Any]) -> Rule:
         applies_from=applies,
         stop=bool(raw.get("stop", False)),
         hidden=bool(raw.get("hidden", False)),
+        makes_provider=bool(raw.get("makes_provider", False)),
         obligations=tuple(Obligation(**o) for o in raw.get("obligations", [])),
     )
 
@@ -267,14 +293,22 @@ def evaluate(rulebook: Rulebook, answers: Mapping[str, bool], role: str = "both"
     tier_id = max(tier_ids, key=lambda t: rulebook.tiers[t].rank, default=rulebook.default_tier)
     tier = rulebook.tiers[tier_id]
 
+    # A deployer who takes over the provider role (Art. 25) carries both sets of duties.
+    effective = role
+    if role == "deployer" and any(r.makes_provider for r in matched):
+        effective = "both"
+
     obligations: list[Obligation] = []
     seen: set[tuple[str, str]] = set()
-    sources = [o for r in matched for o in r.obligations]
-    if tier_id != "out_of_scope":
-        sources += list(rulebook.always)
+    if tier.exclusive:
+        sources = [o for r in matched if r.tier == tier_id for o in r.obligations]
+    else:
+        sources = [o for r in matched for o in r.obligations]
+        if tier_id != "out_of_scope":
+            sources += list(rulebook.always)
     for ob in sources:
         key = (ob.who, ob.text)
-        if ob.applies_to(role) and key not in seen:
+        if ob.applies_to(effective) and key not in seen:
             seen.add(key)
             obligations.append(ob)
 
@@ -286,4 +320,6 @@ def evaluate(rulebook: Rulebook, answers: Mapping[str, bool], role: str = "both"
         matched=matched,
         obligations=obligations,
         answers={k: v for k, v in clean.items() if v},
+        warnings=[w for w in rulebook.warnings if check(w.when)],
+        effective_role=effective,
     )

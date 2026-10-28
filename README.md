@@ -114,7 +114,7 @@ docs/METHOD.md                      How the rules were built and their limits
 
 ## Limitations
 
-This is a **screening tool, not legal advice**. It simplifies some provisions (for example the narrow law-enforcement exceptions in Art. 5(1)(h) and the open-source exemptions) and relies on honest answers. See [docs/METHOD.md](docs/METHOD.md) for the full list. Confirm any high-risk or prohibited result with a qualified lawyer.
+This is a **screening tool, not legal advice**. It simplifies some provisions (for example the narrow law-enforcement exceptions in Art. 5(1)(h) and the open-source exemptions) and relies on honest answers. It now also warns when a scope exclusion conflicts with another use (Recital 24), moves a deployer into the provider role when they rebrand or modify a high-risk system (Art. 25), and flags that the Art. 6(3) exception is a self-assessment that authorities can review (Art. 80). A prohibited result lists only the ban. See [docs/METHOD.md](docs/METHOD.md) for the full list. Confirm any high-risk or prohibited result with a qualified lawyer.
 
 ## Roadmap
 

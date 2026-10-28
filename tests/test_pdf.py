@@ -54,3 +54,12 @@ def test_risk_report_pdf_matches_markdown():
     rb = Rulebook.builtin()
     md = to_markdown(evaluate(rb, {"a3_employment": True}, role="deployer"), rb, "CV screener")
     assert assert_same_content(md, markdown_to_pdf(md, "EU AI Act Risk Check")) >= 10
+
+
+def test_pdf_carries_rationale_note_and_warning():
+    rb = Rulebook.builtin()
+    r = evaluate(rb, {"a3_employment": True, "d_narrow_task": True}, "provider")
+    md = to_markdown(r, rb, "CV screener", rationale="Only sorts CVs by date; a human decides.")
+    assert "Art. 6(4) assessment note" in md
+    assert assert_same_content(md, markdown_to_pdf(md, "EU AI Act Risk Check")) >= 10
+    assert "Only sorts CVs by date" in pdf_text(markdown_to_pdf(md, "EU AI Act Risk Check"))

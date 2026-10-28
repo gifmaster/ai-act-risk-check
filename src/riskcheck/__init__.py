@@ -1,6 +1,6 @@
 """riskcheck: a transparent, rule-based compliance screening engine."""
 
-from .engine import Obligation, Result, Rule, Rulebook, RulebookError, Tier, evaluate
+from .engine import Obligation, Result, Rule, Rulebook, RulebookError, Tier, Warning, evaluate
 from .report import to_markdown
 
 __all__ = [
@@ -10,6 +10,7 @@ __all__ = [
     "Rulebook",
     "RulebookError",
     "Tier",
+    "Warning",
     "evaluate",
     "to_markdown",
 ]

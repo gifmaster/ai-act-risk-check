@@ -260,7 +260,7 @@ The same cases run automatically on every push (`tests/test_acceptance.py`).
 **Expected:** Prohibited
 - Why shows: Art. 5(1)(f)
 - To-do list includes: Art. 5, Art. 99(3)
-- 3 item(s) under *What you need to do*
+- 2 item(s) under *What you need to do*
 
 - [ ] Pass
 
@@ -276,7 +276,7 @@ The same cases run automatically on every push (`tests/test_acceptance.py`).
 
 **Expected:** Prohibited
 - Why shows: Art. 5(1)(c), Art. 50(1)
-- 4 item(s) under *What you need to do*
+- 2 item(s) under *What you need to do*
 
 - [ ] Pass
 
@@ -293,7 +293,7 @@ The same cases run automatically on every push (`tests/test_acceptance.py`).
 **Expected:** Prohibited
 - Why shows: Art. 5, as amended by Reg. (EU) 2026/1744
 - Applies from 2 December 2026
-- 4 item(s) under *What you need to do*
+- 2 item(s) under *What you need to do*
 
 - [ ] Pass
 
@@ -343,6 +343,40 @@ The same cases run automatically on every push (`tests/test_acceptance.py`).
 - Why shows: Arts. 53 and 55
 - To-do list includes: Art. 53(1)(c), Art. 53(1)(d)
 - 5 item(s) under *What you need to do*
+
+- [ ] Pass
+
+### TC21 Rebranded high-risk CV tool
+
+*A company buys a CV screening tool, puts its own brand on it and resells it to clients.*
+
+**Role:** Deployer
+
+**Tick:**
+- 4. High-risk use areas: *Employment: recruiting, screening or evaluating candidates, or decisions on promotion, termination, task allocation or performance*
+- 5. Exceptions for high-risk use areas: *The system profiles natural persons (automated evaluation of personal aspects such as performance, reliability, behaviour)*
+- 7. Context: *You are a deployer, but you put your own name or trademark on a high-risk system, substantially modify it, or change its purpose so that it becomes high risk*
+
+**Expected:** High risk
+- Why shows: Art. 25(1)
+- To-do list includes: Art. 9, Arts. 43, 47, 48, Art. 26(1)
+- 20 item(s) under *What you need to do*
+
+- [ ] Pass
+
+### TC22 Social scoring gets only the ban
+
+*A city scores residents on social behaviour.*
+
+**Role:** Deployer
+
+**Tick:**
+- 2. Prohibited practices: *Scores or classifies people based on social behaviour or personal traits, leading to unjustified or disproportionate detrimental treatment*
+
+**Expected:** Prohibited
+- To-do list includes: Art. 5, Art. 99(3)
+- To-do list does **not** include: Art. 4 (as amended by Reg. (EU) 2026/1744)
+- 2 item(s) under *What you need to do*
 
 - [ ] Pass
 

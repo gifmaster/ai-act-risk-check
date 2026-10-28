@@ -42,3 +42,11 @@ A system in an Annex III area is not high risk if it only performs a narrow proc
 - Sector rules that interact with the AI Act (MDR, financial services, the machinery move to Annex I Section B) are only referenced, not modelled.
 
 These are deliberate scope choices for a screening tool. Each could become its own rule.
+
+## Added after an expert review (v0.2)
+
+- **Prohibited means only the ban.** A prohibited tier shows Art. 5 and the fine, not a compliance checklist for a system that cannot be sold. Set with `exclusive: true` on a tier.
+- **Role change (Art. 25).** The question "you rebrand, substantially modify or repurpose a high-risk system" turns a deployer into a provider for that system. The rule sets `makes_provider: true`, and the obligations list uses the effective role.
+- **Art. 6(3) is a self-assessment.** The result says so, cites Art. 80 (authority review), and the app asks for a written reason that goes into the report as the Art. 6(4) note.
+- **Scope conflicts.** Exclusions (military, research, personal, pre-market) apply to exclusive use only (Recital 24). If you tick one and also describe another use, a `warnings:` entry in the rulebook shows a caution. Warnings never change the tier.
+- **Still simplified:** open-source releases, law-enforcement carve-outs, GPAI systemic risk, and sector law. The app lists these under "What this check does not cover".

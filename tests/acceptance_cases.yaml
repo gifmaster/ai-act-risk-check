@@ -215,3 +215,24 @@ cases:
       tier: minimal
       cites: ["Arts. 53 and 55"]
       must_do: ["Art. 53(1)(c)", "Art. 53(1)(d)"]
+
+  # --- Expert-review additions -------------------------------------------------
+  - id: TC21
+    title: Rebranded high-risk CV tool
+    story: A company buys a CV screening tool, puts its own brand on it and resells it to clients.
+    role: deployer
+    tick: [a3_employment, profiling, ctx_role_change]
+    expect:
+      tier: high
+      cites: ["Art. 25(1)"]
+      must_do: ["Art. 9", "Arts. 43, 47, 48", "Art. 26(1)"]
+
+  - id: TC22
+    title: Social scoring gets only the ban
+    story: A city scores residents on social behaviour.
+    role: deployer
+    tick: [p_social_scoring]
+    expect:
+      tier: prohibited
+      must_do: ["Art. 5", "Art. 99(3)"]
+      must_not_do: ["Art. 4 (as amended by Reg. (EU) 2026/1744)"]
