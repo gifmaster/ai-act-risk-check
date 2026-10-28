@@ -10,23 +10,31 @@ ROLE_LABELS = {"provider": "Provider", "deployer": "Deployer", "both": "Provider
 WHO_LABELS = {"provider": "Provider", "deployer": "Deployer", "all": "Everyone"}
 
 
-def to_markdown(result: Result, rulebook: Rulebook, system_name: str = "", today: date | None = None) -> str:
+def to_markdown(
+    result: Result,
+    rulebook: Rulebook,
+    system_name: str = "",
+    today: date | None = None,
+    rationale: str = "",
+) -> str:
     today = today or date.today()
     name = system_name.strip() or "Unnamed AI system"
     lines = [
         f"# {rulebook.title}: {name}",
         "",
         f"- **Result:** {result.tier.label}",
-        f"- **Role assessed:** {ROLE_LABELS[result.role]}",
+        f"- **Role assessed:** {ROLE_LABELS[result.role]}"
+        + (f" (your answers make you {ROLE_LABELS[result.effective_role].lower()}, Art. 25)" if result.role_shifted else ""),
         f"- **Date:** {today.isoformat()}",
         f"- **Rulebook:** {rulebook.id} v{rulebook.version} (last reviewed {rulebook.last_reviewed})",
         f"- **Legal basis:** {rulebook.source}",
         "",
         f"> {result.tier.summary}",
         "",
-        "## Why",
-        "",
     ]
+    for w in result.warnings:
+        lines += [f"> **Check ({w.cite}):** {w.text}", ""]
+    lines += ["## Why", ""]
     if result.reasons:
         for rule in result.reasons:
             when = f" Applies from {rule.applies_from.day} {rule.applies_from:%B %Y}." if rule.applies_from else ""
@@ -35,6 +43,9 @@ def to_markdown(result: Result, rulebook: Rulebook, system_name: str = "", today
                 lines.append(f"  - Note: {rule.note}")
     else:
         lines.append("- None of the listed prohibited, high-risk or transparency triggers apply.")
+
+    if rationale.strip() and any(r.id == "high.exception_applied" for r in result.matched):
+        lines += ["", "## Art. 6(4) assessment note", "", rationale.strip()]
 
     lines += ["", "## What you need to do", ""]
     if result.obligations:

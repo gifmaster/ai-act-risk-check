@@ -38,6 +38,7 @@ tiers:
     summary: Strict requirements on risk management, data, documentation, human oversight and registration.
   - id: prohibited
     label: Prohibited
+    exclusive: true   # a banned system gets no compliance checklist, only the ban
     summary: This practice is banned in the EU. It must not be placed on the market, put into service or used.
   - id: out_of_scope
     label: Out of scope
@@ -242,6 +243,11 @@ questions:
     section: context
     text: You are a public body, or a private organisation providing public services
     cite: Art. 27(1)
+  - id: ctx_role_change
+    section: context
+    text: You are a deployer, but you put your own name or trademark on a high-risk system, substantially modify it, or change its purpose so that it becomes high risk
+    cite: Art. 25(1)
+    help: Doing any of these makes you the provider of that system, with the full provider obligations.
   - id: ctx_gpai_provider
     section: context
     text: You develop and release a general-purpose AI model yourself (not just use one through an API)
@@ -263,6 +269,16 @@ facts:
     all: [a1_product, a1_third_party]
   high_risk:
     any: [$annex_iii_high, $annex_i_high]
+  # Any answer that describes a use of the system other than an exclusion.
+  other_use:
+    any: [p_manipulation, p_vulnerabilities, p_social_scoring, p_crime_prediction,
+          p_face_scraping, p_emotion_work_education, p_biometric_sensitive, p_realtime_rbi,
+          p_intimate_images, p_csam, a1_product, a3_biometrics, a3_critical_infrastructure,
+          a3_education, a3_employment, a3_public_benefits, a3_credit, a3_insurance,
+          a3_emergency, a3_law_enforcement, a3_migration, a3_justice, a3_elections,
+          t_interacts, t_generates, t_emotion_biometric, t_deepfake, t_public_text]
+  any_scope_exclusion:
+    any: [scope_military, scope_research, scope_personal, scope_premarket]
 
 rules:
   # --- Out of scope: checked first, stop evaluation ---------------------------
@@ -454,14 +470,25 @@ rules:
     tier: null
     cite: Art. 6(3), Art. 6(4), Art. 49(2)
     applies_from: "2027-12-02"
-    reason: The system is in a high-risk area but performs only a limited task, so it is not treated as high risk. You must be able to prove it.
+    reason: The system is in a high-risk area but performs only a limited task, so it is not treated as high risk. This is your own assessment. Nobody approves it, and it must hold up if an authority checks it.
+    note: The provider decides this alone, and market surveillance authorities can review the assessment and reclassify the system (Art. 80). A system that profiles people is always high risk. If you are unsure whether the exception truly applies, treat the system as high risk.
     obligations:
       - who: provider
-        text: Document your assessment that the system is not high risk before placing it on the market, and share it with authorities on request.
+        text: Document your assessment that the system is not high risk before placing it on the market, and share it with authorities on request. Write down why each exception you ticked applies.
         cite: Art. 6(4)
       - who: provider
         text: Register the system in the EU database even though you assessed it as not high risk.
         cite: Art. 49(2)
+
+  # --- Deployer becomes provider (Art. 25) -------------------------------------
+  - id: role.shift
+    when: {all: [ctx_role_change, $high_risk]}
+    tier: null
+    cite: Art. 25(1)
+    applies_from: "2027-12-02"
+    makes_provider: true
+    reason: By rebranding, substantially modifying or repurposing a high-risk system you become its provider. The full provider obligations apply to you, in addition to the deployer duties.
+    note: The original provider must cooperate and hand over the information you need (Art. 25(2)).
 
   # --- High-risk obligations (shared, not listed as a separate reason) --------
   - id: high.obligations
@@ -553,6 +580,12 @@ rules:
       - {who: provider, text: Put in place a policy to comply with EU copyright law., cite: Art. 53(1)(c)}
       - {who: provider, text: Publish a summary of the content used for training., cite: Art. 53(1)(d)}
       - {who: provider, text: "If the model has systemic risk: evaluate it, mitigate risks, report serious incidents and ensure cybersecurity.", cite: Art. 55}
+
+warnings:
+  - id: scope_conflict
+    when: {all: [$any_scope_exclusion, $other_use]}
+    cite: Recital 24, Art. 2
+    text: You ticked a scope exclusion and also described another use of the system. The exclusions (military, research, personal use, pre-market) only apply if the system is used exclusively for that purpose. If it is also used for anything else, the AI Act can apply to that other use. Re-check before relying on "out of scope".
 
 always:
   - who: all

@@ -36,3 +36,16 @@ def test_ticking_a_prohibited_box_changes_the_result():
     at = run()
     at.checkbox(key="q_p_social_scoring").check().run()
     assert "Prohibited" in all_text(at)
+
+
+def test_exception_shows_rationale_box_and_limits():
+    at = run("Invoice sorting in HR")
+    assert any("Art. 6(3)" in w.value for w in at.warning)
+    assert at.text_area(key="rationale") is not None
+    assert any("does not cover" in e.label for e in at.expander)
+
+
+def test_prohibited_example_lists_only_the_ban():
+    at = run("Emotion tracking of employees")
+    text = all_text(at)
+    assert "Prohibited" in text and "AI literacy" not in text

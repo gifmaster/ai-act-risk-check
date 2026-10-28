@@ -98,6 +98,14 @@ with right:
     icon, kind = TIER_STYLE.get(result.tier.id, ("", "info"))
     getattr(st, kind)(f"### {icon} {result.tier.label}\n{result.tier.summary}")
 
+    for w in result.warnings:
+        st.warning(f"**Check your scope answer** `{w.cite}`  \n{w.text}")
+    if result.role_shifted:
+        st.warning(
+            "**Your role changes.** Your answers make you the provider of this system "
+            "(Art. 25). The list below includes the provider obligations."
+        )
+
     st.subheader("Why")
     if result.reasons:
         for rule in result.reasons:
@@ -108,14 +116,40 @@ with right:
     else:
         st.markdown("None of the prohibited, high-risk or transparency triggers apply.")
 
+    exception_used = any(r.id == "high.exception_applied" for r in result.matched)
+    rationale = ""
+    if exception_used:
+        st.warning(
+            "**You are relying on the Art. 6(3) exception.** This is a self-assessment. "
+            "Authorities can review it and reclassify the system (Art. 80). Write down why it applies."
+        )
+        rationale = st.text_area(
+            "Why does the exception apply? (goes into the report as your Art. 6(4) note)",
+            key="rationale",
+            height=110,
+        )
+
     st.subheader(f"What you need to do ({len(result.obligations)})")
     for ob in result.obligations:
         st.markdown(f"- **{WHO_LABELS[ob.who]}:** {ob.text} `{ob.cite}`")
 
     st.download_button(
         "Download report (Markdown)",
-        data=to_markdown(result, rb, system_name),
+        data=to_markdown(result, rb, system_name, rationale=rationale),
         file_name=f"ai-act-check-{(system_name or 'system').lower().replace(' ', '-')}.md",
         mime="text/markdown",
         width="stretch",
     )
+
+    with st.expander("What this check does not cover"):
+        st.markdown(
+            "- **Simplified rules.** Some exceptions are reduced to a single tick, for example "
+            "open-source releases and law-enforcement carve-outs. If one might apply, read the article.\n"
+            "- **General-purpose AI models** are only covered by one yes/no question. Systemic-risk "
+            "models need their own analysis.\n"
+            "- **Other law.** Sector rules (medical devices, finance, employment), GDPR and national "
+            "law are outside this tool.\n"
+            "- **Your answers.** The result is only as good as the ticks. The tool cannot tell whether "
+            "your task really is narrow or your use really is exclusive.\n"
+            "- **Not legal advice.** Confirm high-risk and prohibited results with a lawyer."
+        )
