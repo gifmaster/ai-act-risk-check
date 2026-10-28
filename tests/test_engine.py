@@ -69,7 +69,7 @@ def test_builtin_rulebook_loads_and_every_question_is_used():
     from riskcheck.engine import _refs
 
     used: set[str] = set()
-    conds = [r.when for r in rb.rules] + list(rb.facts.values())
+    conds = [r.when for r in rb.rules] + list(rb.facts.values()) + [w.when for w in rb.warnings]
     for c in conds:
         used |= {x for x in _refs(c) if not x.startswith("$")}
     unused = set(rb.questions) - used

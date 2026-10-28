@@ -48,6 +48,7 @@ That means:
 | The "not high risk after all" exception, and why profiling cancels it | Art. 6(3)-(4) |
 | Provider and deployer obligations, incl. fundamental rights impact assessment | Arts. 9-17, 26, 27, 43-49, 72-73, 86 |
 | Transparency for chatbots, generated content and deepfakes | Art. 50 |
+| Systems that act on their own with tool or data access: an optional question that adds a note on oversight and logging, never changes the tier | Arts. 12, 14, 26 |
 | General-purpose AI model providers | Arts. 53, 55 |
 | AI literacy | Art. 4 |
 

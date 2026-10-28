@@ -33,7 +33,7 @@ def to_markdown(
         "",
     ]
     for w in result.warnings:
-        lines += [f"> **Check ({w.cite}):** {w.text}", ""]
+        lines += [f"> **{'Note' if w.kind == 'note' else 'Check'} ({w.cite}):** {w.text}", ""]
     lines += ["## Why", ""]
     if result.reasons:
         for rule in result.reasons:

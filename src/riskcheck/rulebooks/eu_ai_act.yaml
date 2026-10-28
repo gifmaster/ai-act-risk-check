@@ -248,6 +248,11 @@ questions:
     text: You are a deployer, but you put your own name or trademark on a high-risk system, substantially modify it, or change its purpose so that it becomes high risk
     cite: Art. 25(1)
     help: Doing any of these makes you the provider of that system, with the full provider obligations.
+  - id: ctx_agentic
+    section: context
+    text: The system acts on its own with tool or data access, for example it calls other systems, changes data or sends messages without a person approving each step
+    cite: Art. 12, 14
+    help: Only adds a note to the report. It never changes the risk tier.
   - id: ctx_gpai_provider
     section: context
     text: You develop and release a general-purpose AI model yourself (not just use one through an API)
@@ -586,6 +591,19 @@ warnings:
     when: {all: [$any_scope_exclusion, $other_use]}
     cite: Recital 24, Art. 2
     text: You ticked a scope exclusion and also described another use of the system. The exclusions (military, research, personal use, pre-market) only apply if the system is used exclusively for that purpose. If it is also used for anything else, the AI Act can apply to that other use. Re-check before relying on "out of scope".
+
+  - id: agent_high_risk
+    kind: note
+    tiers: [high]
+    when: ctx_agentic
+    cite: Art. 12, 14, 26(2), 26(6)
+    text: Your system acts on its own with tool or data access, and it is high risk. Human oversight has to be real. The provider must design the system so people can understand, monitor and override it (Art. 14), and you must assign competent people to oversee it (Art. 26(2)). The system must record events automatically (Art. 12, a provider duty) and you keep the logs you control for at least six months (Art. 26(6)). Decide which actions need a person's approval before they take effect.
+  - id: agent_other
+    kind: note
+    tiers: [limited, minimal]
+    when: ctx_agentic
+    cite: Art. 50, GDPR Art. 22
+    text: Your system acts on its own with tool or data access. The AI Act adds no oversight or logging duties at this tier, but other rules may apply. People dealing with the system may need to be told it is AI (Art. 50), and GDPR Art. 22 limits decisions about people made only by automated means. Keeping a person's approval for actions that cannot be undone, and logs of what the system did, is good practice. The framework's agent-level controls note shows which controls are law and which are practice (github.com/gifmaster/ai-governance-framework, docs/agent-level-controls.md).
 
 always:
   - who: all
