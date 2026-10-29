@@ -132,3 +132,7 @@ I help organisations put the EU AI Act into practice. [senderovitz.eu](https://s
 **Next step after classifying:** the [Practical AI Governance Framework](https://github.com/gifmaster/ai-governance-framework) covers the rest: policy, roles, the use case lifecycle and templates. Buying an AI tool? Check the vendor contract with the [AI Contract Clause Checker](https://github.com/gifmaster/contract-clause-checker). Then log the result in the [AI Use Case Register](https://github.com/gifmaster/ai-use-case-register), which imports this tool's report. To see which of the AI Act, GDPR, NIS2 and DORA apply to you, and where they overlap, use the [Regulation Navigator](https://github.com/gifmaster/regulation-navigator).
 
 Licensed under the [GNU AGPL-3.0](LICENSE): free to use, study and change. If you run a modified version as a service, you must share its source code. Commercial license without these terms: [alexander@senderovitz.eu](mailto:alexander@senderovitz.eu).
+
+## Experimental: run it in the browser (no server)
+
+`python scripts/build_stlite.py` builds a static copy that runs the unchanged app inside the visitor's browser with [stlite](https://github.com/whitphx/stlite). It can be hosted for free on GitHub Pages, never goes to sleep, and uploaded files never leave the visitor's computer. The first load is slower (Python starts in the browser). This is a test next to the normal Streamlit app, not a replacement.
